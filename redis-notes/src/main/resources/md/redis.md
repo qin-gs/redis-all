@@ -79,5 +79,121 @@ nosql
 
 
 
+docker 运行
 
+
+
+启动Redis容器，并将Redis配置文件映射到本地conf文件夹
+
+```
+docker run -p 6379:6379 --name redis -v /Users/qgs/Desktop/docker/redis/conf/redis.conf:/etc/redis/redis.conf -v /Users/qgs/Desktop/docker/redis/data:/data -d redis redis-server /etc/redis/redis.conf --appendonly yes
+
+docker run -p 6379:6379 -d redis // 简单启动
+docker exec -it d06fa7355b89 /bin/bash // 进入启动后的界面
+
+redis-server /conf/redis.conf
+
+// 进入之后
+redis-cli -p 6379
+// 退出
+shutdown
+
+// 性能测试
+redis-benchmark -h localhost -p 6379 -c 100 -n 100000 -d 3
+```
+
+
+
+#### 基础知识
+
+
+
+默认有 16 个数据库
+
+```bash
+select 3
+set name qqq // 设置值
+dbsize
+get name // 获取已设置的值
+append name '--' // 添加字符串
+keys *
+flushdb // 清空当前数据库
+flushdball
+exists name // 判断是否存在
+move name 1 // 移除值
+expire name 10 // 设置过期时间 10s
+ttl name // 查看剩余时间
+type name // 查看类型
+
+```
+
+
+
+**单线程**
+
+避免上下文切换
+
+
+
+#### 数据类型
+
+- 字符串 strings
+- 散列 hashes
+- 列表 lists
+- 集合 sets
+- 集合有序集合 sorted sets
+
+
+
+1. 字符串
+
+   ```bash
+   
+   set name qqq # 设置值
+   get name # 获取已设置的值
+   append name '--' # 添加字符串，如果不存在相当于 set
+   getrange name start end # 截取
+   setrange name 2 xx # 替换
+   keys *
+   exists name # 判断是否存在
+   
+   setex k 20 'hello' # (set with expire)
+   setnx k 'world' # (set not exists)
+   
+   mset k1 v2 k2 v2 # 一次设置多个值
+   mget k1 k2 # 一次获取多个值
+   msetnx k1 v1 k2 v2 # 原子操作，一个key存在，全部设置失败
+   
+   mset user:1:name n user:1:age 12 # 设置对象
+   mget user:1:name user:1:age # 获取对象值
+   
+   getset key value # 不存在返回 nil，存在返回旧值，设置新值
+   
+   
+   # 计数
+   set counter 0
+   incr counter # 递增
+   incr by counter 10 # 递增指定数值
+   decr counter # 递减
+   decrby counter 10 # 递减指定数值
+   ```
+
+   
+
+2. 列表
+
+   ```bash
+   lpush list 1
+   lpush list 2
+   lrange list 0 1
+   rpush list 3
+   
+   lpop list
+   rpop list
+   
+   lindex list 1 # 通过下标获取
+   llen list # 获取长度
+   
+   lrem list 1 'hello' # 移除指定次数的元素
+   ```
 
