@@ -180,7 +180,7 @@ type name // 查看类型
 
    
 
-2. 列表
+2. 列表 (实际是一个链表)
 
    ```bash
    lpush list 1
@@ -193,7 +193,104 @@ type name // 查看类型
    
    lindex list 1 # 通过下标获取
    llen list # 获取长度
-   
    lrem list 1 'hello' # 移除指定次数的元素
+   ltrim list 1 2 # 通过下标截取指定长度 (包含首尾，原列表会被改变)
+   rpoplpush list newlist # 将 list 中的最后一个元素放到 newlist 中
+   exists list # 判断是否存在
+   lset list 0 'world' # 替换指定下标的值(必须要存在，否则会报错)
+   linsert list before/after 'hello' 'world' # 在 hello 之前/后插入 world
    ```
+
+
+
+3. 集合
+
+   ```bash
+   sadd set 'hello' # 添加元素
+   spop set # 随机移除元素
+   smembers set # 查看集合中所有元素
+   sismember set 'hello' # 判断是否存在
+   scard set # 查看数量
+   srem set 'hello' # 移除指定元素
+   srandmember set 2 # 在集合中随机选择指定个数的元素(不给默认为1个)
+   smove source destination member # 移动元素
+   
+   sdiff set1 set2 # 差集
+   sinter set1 set2 # 交集
+   sunion set1 set2 # 并集
+   ```
+
+
+
+4. 哈希
+
+   ```bash
+   hset hash k1 v1 k2 v2 # 添加元素
+   hget hash k2 # 获取元素
+   hmset hash k1 v1 k2 v2 # 设置多个值 废弃
+   
+   hdel hash k1 # 删除指定key
+   hgetall hash # 获取全部元素 键+值
+   hlen hash # 元素数量
+   hexists hash k1 #是否存在
+   
+   hkeys hash # 只获取key
+   hvals hash # 只获取value
+   
+   hincrby hash k1 1 # 给指定值加1
+   hsetnx hash k3 v3 # 不存在才能设置
+   ```
+
+   
+
+5. 有序集合
+
+   ```bash
+   zadd azset 1 one # 向 azset 中添加元素
+   zrem azset onw # 移除元素
+   zcard azset # 查看集合中元素个数
+   
+   zrange azset 0 -1 # 查看所有元素 正序
+   zrevrange azset 0 -1 # 查看所有元素 逆序
+   
+   zrangebyscore azset -inf +inf # 排序(从负无穷 到 正无穷)
+   zrangebyscore azset -inf 2500 withscores # 排序(只显示 负无穷 到 2500) 加上值
+   
+   zcount azset 1 3 # 计数
+   ```
+
+   
+
+6. 地理位置
+
+   ```bash
+   geoadd cities 13.361389 38.115556 "Palermo"  # 将指定的地理空间位置（经度、纬度、名称）添加到指定的key中
+   geodist cities Palermo Catania km # 获取两个给定位置间的距离(单位: km)
+   geohash cities Palermo # 返回一个或多个位置元素的 Geohash 表示
+   geopos cities Palermo # 获取指定地区的经纬度
+   georadius cities 15 37 2000 km WITHDIST count 2 # 获取与指定位置距离不超过给定最大距离的所有位置元素
+   georadiusbymember # 找出位于指定元素指定距离内的元素
+   ```
+
+
+
+7. 基数 (hyperloglog)
+
+   ```bash
+   pfadd pf a b c d d # 添加元素到 hyperloglog
+   pfcount pf # 基数统计
+   pfmerge all b c # 合并 b c 到 all
+   ```
+
+   
+
+8. 位图 (bitmaps)
+
+   ```bash
+   setbit symbol Monday 1 # 设置(只有两个状态01)
+   getbit symbol 0 # 获取状态
+   bitcount symbol # 统计状态为1的数量
+   ```
+
+   
 
