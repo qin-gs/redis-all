@@ -92,11 +92,15 @@ docker run -p 6379:6379 -d redis // 简单启动
 docker exec -it d06fa7355b89 /bin/bash // 进入启动后的界面
 
 redis-server /conf/redis.conf
+redis-server /etc/redis/redis.conf
 
 // 进入之后
 redis-cli -p 6379
 // 退出
 shutdown
+
+// 移除容器
+docker rm -f $(docker ps -aq)
 
 // 性能测试
 redis-benchmark -h localhost -p 6379 -c 100 -n 100000 -d 3
@@ -312,3 +316,8 @@ watch 监控某个值，事务执行的时候如果其他线程修改了这个�
 
 unwatch 放弃监控
 
+
+
+#### SpringBoot
+
+org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
