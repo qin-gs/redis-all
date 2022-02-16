@@ -321,3 +321,84 @@ unwatch 放弃监控
 #### SpringBoot
 
 org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+
+
+#### 配置文件
+
+```bash
+config set requirepass '123456' # 设置密码
+config get requirepass # 获取密码
+
+auth 123456 # 认证登录
+```
+
+
+
+```bash
+单位 不区分大小写
+
+1k => 1000 bytes
+1kb => 1024 bytes
+1m => 1000000 bytes
+1mb => 1024*1024 bytes
+1g => 1000000000 bytes
+1gb => 1024*1024*1024 bytes
+
+include /path/to/local.conf
+
+include /path/to/other.conf # 可以包含多个配置文件
+
+bind 127.0.0.1 # ip 绑定
+protected-mode yes # 包含模式
+port 6379 # 端口
+
+deamonize yes # 以守护进程方式运行
+pidfile /var/run/redis_6379.pid # 如果已后台方式运行，需要指定 pid 文件
+
+loglevel notice # 日志
+logfile "a.log" # 日志文件位置
+databases 16 # 数据库数量
+always-show-logo yes # 展示 logo
+
+save 900 1 # 900s 内修改一次则进行保存
+
+stop-write-on-bgsace-error yes # 持久化出错，是否继续
+rdpcompression yes # 是否压缩 rdb 文件
+rdbchecksum yes # 保存 rdb 文件时进行错误检查
+dir ./ # rdb 文件位置
+
+maxclients 10000 # 客户端最大数量
+maxmemory 1000bytes # redis 配置最大内存容量
+maxmemory-policy noeviction # 内存达到上限后的处理策略
+  volatile-lru -> Evict using approximated LRU, only keys with an expire set.
+  allkeys-lru -> Evict any key using approximated LRU.
+  volatile-lfu -> Evict using approximated LFU, only keys with an expire set.
+  allkeys-lfu -> Evict any key using approximated LFU.
+  volatile-random -> Remove a random key having an expire set.
+  allkeys-random -> Remove a random key, any key.
+  volatile-ttl -> Remove the key with the nearest expire time (minor TTL)
+  noeviction -> Don't evict anything, just return an error on write operations.
+
+appendonly no # aof 模块
+appendfilename 'aof.log' # 持久化文件名
+appendsync always/everysec/no # 每次修改/每秒/从不 sync
+```
+
+
+
+#### 持久化
+
+rdb 文件生成条件 (config get dir 查看持久化文件位置)，启动时自动恢复
+
+- save 条件满足
+- 执行 flushall 命令
+- 退出 redis
+
+适合大规模数据恢复
+
+对数据完整性要求不高
+
+有一定的时间间隔，会丢一些数据
+
+fork 进程的时候会占用一些内存

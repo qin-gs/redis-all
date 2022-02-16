@@ -19,8 +19,7 @@ public class RedisConfig {
      * 自定义一个 RedisTemplate
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory)
-            throws UnknownHostException {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
 
         ObjectMapper om = new ObjectMapper();
@@ -29,10 +28,13 @@ public class RedisConfig {
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
         serializer.setObjectMapper(om);
 
+        // string 序列化
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
 
+        // key 和 hash.key 采用 string 的序列化方式
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
+        // value 采用 jackson 序列化
         template.setValueSerializer(serializer);
 
         template.afterPropertiesSet();
