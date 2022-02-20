@@ -389,7 +389,9 @@ appendsync always/everysec/no # 每次修改/每秒/从不 sync
 
 #### 持久化
 
-rdb 文件生成条件 (config get dir 查看持久化文件位置)，启动时自动恢复
+**rdb** (默认)
+
+文件生成条件 (config get dir 查看持久化文件位置)，启动时自动恢复
 
 - save 条件满足
 - 执行 flushall 命令
@@ -402,3 +404,102 @@ rdb 文件生成条件 (config get dir 查看持久化文件位置)，启动时�
 有一定的时间间隔，会丢一些数据
 
 fork 进程的时候会占用一些内存
+
+
+
+**aof**
+
+默认不开启，需要修改配置文件 appendonly yes
+
+可以使用 redis-check-aof 文件修复 aof 文件 `redis-check-aof --fix appenfonly.aof`
+
+每一次修改都进行同步，文件完整性更好
+
+每秒同步一次，可能会丢失一秒的数据
+
+aof 生成的文件大于 rdb，修复速度慢(但是如果同时开启两种持久化方式，优先使用 aof 恢复(更完整))
+
+aof 运行效率低
+
+
+
+#### 发布订阅
+
+发布 publish
+
+频道 channel
+
+定义 subscribe
+
+```bash
+subscribe channel-1 # 订阅频道
+
+publish channel-1 "a message" # 发布消息
+接收的是消息
+消息来自哪个频道
+消息内容
+```
+
+
+
+#### 主从复制
+
+数据复制是单向的( 主 -> 从 )
+
+作用：
+
+- 数据冗余
+- 故障恢复
+- 负载均衡( 读写分离 )
+- 高可用
+
+搭建集群需要修改 redis.conf 配置文件
+
+- port 端口
+- daemonize yes 后台运行
+- pidfile
+- logfile
+- dbfilename
+
+```bash
+redis-server conf/redis-6379.conf # 启动三个
+ps -ef | grep redis # 看一下进程
+# 默认都是主节点，需要将其中两个修改成从节点
+slaveof 127.0.0.1 6379 # 将 6379 作为主节点
+info replication # 查看信息
+
+# 修改配置文件
+replicaof 127.0.0.1 6379
+masterauth password
+```
+
+全量复制 / 增量复制
+
+
+
+#### 哨兵模式
+
+主节点故障后自动切换，节点恢复后作为从节点
+
+哨兵配置文件 sentinel.conf
+
+```bash
+# sentinel monitor 被监控的主机名称 host port 几个从节点认为主节点失联后从新选举
+sentinel monitor redis-sentinel 127.0.0.1 6379 1
+
+redis-sentinel sentinel.conf # 启动哨兵
+```
+
+
+
+#### 缓存穿透/缓存雪崩
+
+缓存穿透 (查不到)
+
+缓存击穿 (缓存过期，过期之后请求量太大)
+
+缓存雪崩 (某段时间缓存集中失效)
+
+- redis 高可用
+- 限流降级
+- 数据预热
