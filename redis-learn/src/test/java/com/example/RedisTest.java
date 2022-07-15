@@ -1,6 +1,5 @@
 package com.example;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.pojo.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +12,9 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 public class RedisTest {
@@ -51,7 +53,7 @@ public class RedisTest {
         log.info(o.toString());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
         Jedis jedis = new Jedis("localhost", 6379);
         String ping = jedis.ping(); // PONG
 
@@ -59,10 +61,12 @@ public class RedisTest {
         boolean existsK1 = jedis.exists("k1");
         String setUsername = jedis.set("username", "qqq");
 
-        JSONObject json = new JSONObject();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> json = new HashMap<>();
         json.put("k1", "v1");
         json.put("k2", "v2");
-        String s = json.toJSONString();
+        String s = mapper.writeValueAsString(mapper);
+
 
         // 事务操作
         Transaction transaction = jedis.multi();

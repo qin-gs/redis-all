@@ -10,8 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.net.UnknownHostException;
-
 @Configuration
 public class RedisConfig {
 
@@ -36,8 +34,6 @@ public class RedisConfig {
         template.setHashKeySerializer(stringRedisSerializer);
         // value 采用 jackson 序列化
         template.setValueSerializer(serializer);
-
-        template.afterPropertiesSet();
 
         template.setConnectionFactory(redisConnectionFactory);
         return template;

@@ -1,9 +1,19 @@
 package com.example.pojo;
 
 public class User {
+
+    private String id;
     private String username;
     private String password;
     private int age;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -32,13 +42,16 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", age=" + age +
                 '}';
     }
 
+
     public static final class UserBuilder {
+        private String id;
         private String username;
         private String password;
         private int age;
@@ -48,6 +61,11 @@ public class User {
 
         public static UserBuilder anUser() {
             return new UserBuilder();
+        }
+
+        public UserBuilder id(String id) {
+            this.id = id;
+            return this;
         }
 
         public UserBuilder username(String username) {
@@ -67,6 +85,7 @@ public class User {
 
         public User build() {
             User user = new User();
+            user.setId(id);
             user.setUsername(username);
             user.setPassword(password);
             user.setAge(age);
